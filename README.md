@@ -1,4 +1,4 @@
-# another-rollup-watch
+# :mag_right: another-rollup-watch
 This is a fork of [rollup/rollup-watch](http://github.com/rollup/rollup-watch).
 
 ## Features added
