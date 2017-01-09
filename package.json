@@ -1,0 +1,36 @@
+{
+  "name": "another-rollup-watch",
+  "version": "3.3.0",
+  "description": "Watch files for changes and perform incremental rebuilds with Rollup",
+  "main": "index.js",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "mocha --slow 200",
+    "prepublish": "npm run lint && npm test",
+    "lint": "eslint src"
+  },
+  "repository": "pqml/another-rollup-watch",
+  "keywords": [
+    "rollup",
+    "modules",
+    "bundling"
+  ],
+  "author": "pqml",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pqml/another-rollup-watch/issues"
+  },
+  "homepage": "https://github.com/pqml/another-rollup-watch#readme",
+  "dependencies": {
+    "chokidar": "^1.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.12.2",
+    "mocha": "^3.2.0",
+    "rollup": "^0.39.0",
+    "sander": "^0.6.0"
+  }
+}
