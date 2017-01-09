@@ -3,39 +3,39 @@ const sander = require( 'sander' );
 const rollup = require( 'rollup' );
 const watch = require( '..' );
 
-describe( 'another-rollup-watch', () => {
-  beforeEach( () => sander.rimraf( 'test/_tmp' ) );
+describe('another-rollup-watch', () => {
+  beforeEach(() => sander.rimraf('test/_tmp'));
 
-  function run ( file ) {
-    const resolved = require.resolve( file );
-    delete require.cache[ resolved ];
-    return require( resolved );
+  function run (file) {
+    const resolved = require.resolve(file);
+    delete require.cache[resolved];
+    return require(resolved);
   }
 
-  function sequence ( watcher, events ) {
-    return new Promise( ( fulfil, reject ) => {
-      function go ( event ) {
+  function sequence (watcher, events) {
+    return new Promise((fulfil, reject) => {
+      function go (event) {
         const next = events.shift();
+        if (!next) {
 
-        if ( !next ) {
           fulfil();
-        }
 
-        else if ( typeof next === 'string' ) {
-          watcher.once( 'event', event => {
-            if ( event.code !== next ) {
-              reject( new Error( `Expected ${next} error, got ${event.code}` ) );
+        } else if (typeof next === 'string') {
+
+          watcher.once('event', event => {
+            if (event.code !== next) {
+              reject(new Error(`Expected ${next} event, got ${event.code}`));
             } else {
-              go( event );
+              go(event);
             }
           });
-        }
 
-        else {
+        } else {
+
           Promise.resolve()
-            .then( () => next( event ) )
-            .then( go )
-            .catch( reject );
+            .then(() => next(event))
+            .then(go)
+            .catch(reject);
         }
       }
 
@@ -43,51 +43,51 @@ describe( 'another-rollup-watch', () => {
     });
   }
 
-  it( 'watches a file', () => {
-    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then( () => {
-      const watcher = watch( rollup, {
+  it('watches a file', () => {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
+      const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs'
       });
 
-      return sequence( watcher, [
+      return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/basic/bundle.js' ), 42 );
-          sander.writeFileSync( 'test/_tmp/basic/main.js', 'export default 43;' );
+          assert.equal(run('./_tmp/basic/bundle.js' ), 42);
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;');
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/basic/bundle.js' ), 43 );
+          assert.equal(run('./_tmp/basic/bundle.js'), 43);
           watcher.close();
         }
       ]);
     });
   });
 
-  it( 'watches a dependency', () => {
-    return sander.copydir( 'test/fixtures/dep' ).to( 'test/_tmp/dep' ).then( () => {
+  it('watches a dependency', () => {
+    return sander.copydir('test/fixtures/dep').to('test/_tmp/dep').then(() => {
 
-      const watcher = watch( rollup, {
+      const watcher = watch(rollup, {
         entry: 'test/_tmp/dep/main.js',
         dest: 'test/_tmp/dep/bundle.js',
         format: 'cjs'
       });
 
-      return sequence( watcher, [
+      return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/dep/bundle.js' ), 42 );
-          sander.writeFileSync( 'test/_tmp/dep/dep.js', 'export default 43;' );
+          assert.equal(run('./_tmp/dep/bundle.js' ), 42);
+          sander.writeFileSync('test/_tmp/dep/dep.js', 'export default 43;');
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/dep/bundle.js' ), 43 );
+          assert.equal(run('./_tmp/dep/bundle.js'), 43);
           watcher.close();
         }
       ]);
@@ -95,30 +95,30 @@ describe( 'another-rollup-watch', () => {
     });
   });
 
-  it( 'recovers from an error', () => {
-    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then( () => {
-      const watcher = watch( rollup, {
+  it('recovers from an error', () => {
+    return sander.copydir('test/fixtures/basic' ).to('test/_tmp/basic').then(() => {
+      const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs'
       });
 
-      return sequence( watcher, [
+      return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/basic/bundle.js' ), 42 );
-          sander.writeFileSync( 'test/_tmp/basic/main.js', 'export nope;' );
+          assert.equal(run( './_tmp/basic/bundle.js' ), 42);
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export nope;');
         },
         'BUILD_START',
         'ERROR',
         () => {
-          sander.writeFileSync( 'test/_tmp/basic/main.js', 'export default 43;' );
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;');
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/basic/bundle.js' ), 43 );
+          assert.equal(run( './_tmp/basic/bundle.js'), 43);
           watcher.close();
         }
       ]);
@@ -126,40 +126,39 @@ describe( 'another-rollup-watch', () => {
     });
   });
 
-  it( 'refuses to watch the output file (#15)', () => {
-    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then( () => {
-      const watcher = watch( rollup, {
+  it('refuses to watch the output file (#15)', () => {
+    return sander.copydir('test/fixtures/basic').to( 'test/_tmp/basic').then(() => {
+      const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs'
       });
 
-      return sequence( watcher, [
+      return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/basic/bundle.js' ), 42 );
-          sander.writeFileSync( 'test/_tmp/basic/main.js', `import './bundle.js'` );
+          assert.equal(run('./_tmp/basic/bundle.js' ), 42);
+          sander.writeFileSync('test/_tmp/basic/main.js', `import './bundle.js'`);
         },
         'BUILD_START',
         'ERROR',
         event => {
-          assert.equal( event.error.message, 'Cannot import the generated bundle' );
-          sander.writeFileSync( 'test/_tmp/basic/main.js', 'export default 43;' );
+          assert.equal(event.error.message, 'Cannot import the generated bundle');
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;');
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/basic/bundle.js' ), 43 );
+          assert.equal(run( './_tmp/basic/bundle.js'), 43);
           watcher.close();
         }
       ]);
     });
   });
 
-  it( 'doesn\'t watches a removed dependency', () => {
-    return sander.copydir( 'test/fixtures/dep' ).to( 'test/_tmp/dep' ).then( () => {
-
+  it('doesn\'t watches a removed dependency', () => {
+    return sander.copydir('test/fixtures/dep').to('test/_tmp/dep').then(() => {
       const watcher = watch( rollup, {
         entry: 'test/_tmp/dep/main.js',
         dest: 'test/_tmp/dep/bundle.js',
@@ -170,14 +169,14 @@ describe( 'another-rollup-watch', () => {
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/dep/bundle.js' ), 42 );
-          sander.writeFileSync( 'test/_tmp/dep/main.js', 'export default 43;' );
+          assert.equal(run( './_tmp/dep/bundle.js' ), 42);
+          sander.writeFileSync('test/_tmp/dep/main.js', 'export default 43;');
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal( run( './_tmp/dep/bundle.js' ), 43 );
-          sander.writeFileSync( 'test/_tmp/dep/dep.js', 'export default 44;' );
+          assert.equal(run('./_tmp/dep/bundle.js'), 43);
+          sander.writeFileSync('test/_tmp/dep/dep.js', 'export default 44;');
         },
         () => {
           return new Promise((resolve, reject) => {
@@ -194,8 +193,34 @@ describe( 'another-rollup-watch', () => {
           watcher.close();
         }
       ]);
-
     });
   });
+
+  it('builds in memory', () => {
+    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then(() => {
+
+      const watcher = watch( rollup, {
+        entry: 'test/_tmp/basic/main.js',
+        dest: 'test/_tmp/basic/bundle.js',
+        format: 'cjs',
+        watch: {
+          inMemory: true,
+          write: false
+        }
+      });
+
+      return sequence(watcher, [
+        'BUILD_START',
+        'BUILD_END',
+        (event) => {
+          assert.equal(event.bundles['test/_tmp/basic/bundle.js'].code,
+            '\'use strict\';\n\nvar main = 42;\n\nmodule.exports = main;\n');
+          watcher.close();
+        }
+      ]);
+    });
+  });
+
+
 
 });

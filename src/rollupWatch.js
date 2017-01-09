@@ -2,17 +2,25 @@ const path = require('path');
 const Emitter = require('events');
 const createModuleWatcher = require('./moduleWatcher');
 
-// const opts = { encoding: 'utf-8', persistent: true };
+const defaultOpts = {
+  chokidar: {},
+  inMemory: false,
+  write: true
+};
 
-function watch (rollup, options) {
+function watch (rollup, _options) {
   const watcher = new Emitter();
   watcher.close = close;
+
+  const options = Object.assign({}, _options || {});
+  const watchOptions = Object.assign({}, defaultOpts, options.watch || {});
+  if (options.watch) delete options.watch;
 
   const dests = options.dest
     ? [path.resolve(options.dest)]
     : options.targets.map(target => path.resolve(target.dest));
 
-  const moduleWatcher = createModuleWatcher(options.chokidarOpts || {});
+  const moduleWatcher = createModuleWatcher(watchOptions.chokidar || {});
   moduleWatcher.setDests(dests);
   moduleWatcher.on('watch', triggerRebuild);
 
@@ -43,8 +51,9 @@ function watch (rollup, options) {
 
     const start = Date.now();
     const initial = !moduleWatcher.isWatching();
-
+    const inMemoryBundles = {};
     const buildOpts = Object.assign({}, options);
+
     if (cache) buildOpts.cache = cache;
 
     watcher.emit('event', { code: 'BUILD_START'});
@@ -64,18 +73,32 @@ function watch (rollup, options) {
           if (buildOpts.targets) {
             let p = [];
             for (let i = 0; i < buildOpts.targets.length; i++) {
-              const target = buildOpts.targets[i];
-              const mergedOpts = Object.assign({}, buildOpts, target);
-              p.push(bundle.write(mergedOpts));
+              const targetOpts = buildOpts.targets[i];
+              const mergedOpts = Object.assign({}, buildOpts, targetOpts);
+              if (watchOptions.inMemory) {
+                const res = bundle.generate(mergedOpts);
+                inMemoryBundles[mergedOpts.dest] = res;
+                return resolve(bundle);
+              }
+              if (watchOptions.write) {
+                p.push(bundle.write(mergedOpts));
+              }
             }
             Promise.all(p)
               .then(() => resolve(bundle))
               .catch(reject);
           } else if (buildOpts.dest) {
-            bundle.write(buildOpts)
-              .then(() => resolve(bundle))
-              .catch(reject);
-          } else { // todo: in-memory generation with bundle.generate().code
+            if (watchOptions.inMemory) {
+              const res = bundle.generate(buildOpts);
+              inMemoryBundles[buildOpts.dest] = res;
+              return resolve(bundle);
+            }
+            if (watchOptions.write) {
+              bundle.write(buildOpts)
+                .then(() => resolve(bundle))
+                .catch(reject);
+            }
+          } else {
             resolve(bundle);
           }
         });
@@ -85,13 +108,14 @@ function watch (rollup, options) {
         watcher.emit('event', {
           code: 'BUILD_END',
           duration: Date.now() - start,
-          initial
+          initial: initial,
+          bundles: inMemoryBundles
         });
       }, error => {
         building = false;
         watcher.emit('event', {
           code: 'ERROR',
-          error
+          error: error
         });
       })
       .then(() => {
