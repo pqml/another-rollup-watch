@@ -78,7 +78,6 @@ function watch (rollup, _options) {
               if (watchOptions.inMemory) {
                 const res = bundle.generate(mergedOpts);
                 inMemoryBundles[mergedOpts.dest] = res;
-                return resolve(bundle);
               }
               if (watchOptions.write) {
                 p.push(bundle.write(mergedOpts));
@@ -91,12 +90,13 @@ function watch (rollup, _options) {
             if (watchOptions.inMemory) {
               const res = bundle.generate(buildOpts);
               inMemoryBundles[buildOpts.dest] = res;
-              return resolve(bundle);
             }
             if (watchOptions.write) {
               bundle.write(buildOpts)
                 .then(() => resolve(bundle))
                 .catch(reject);
+            } else {
+              return resolve(bundle);
             }
           } else {
             resolve(bundle);

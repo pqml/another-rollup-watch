@@ -1,6 +1,6 @@
 {
   "name": "another-rollup-watch",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "Watch files for changes and perform incremental rebuilds with Rollup",
   "main": "index.js",
   "files": [

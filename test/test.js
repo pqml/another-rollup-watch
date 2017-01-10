@@ -212,7 +212,8 @@ describe('another-rollup-watch', () => {
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
-        (event) => {
+        event => {
+          assert(event.bundles !== undefined, 'No in-memory support');
           assert.equal(event.bundles['test/_tmp/basic/bundle.js'].code,
             '\'use strict\';\n\nvar main = 42;\n\nmodule.exports = main;\n');
           watcher.close();
@@ -221,6 +222,32 @@ describe('another-rollup-watch', () => {
     });
   });
 
+  it('builds multiple targets in memory', () => {
+    return sander.copydir('test/fixtures/multiple').to('test/_tmp/multiple').then(() => {
+      const watcher = watch(rollup, {
+        entry: 'test/_tmp/multiple/main.js',
+        targets: [
+          { dest: 'test/_tmp/multiple/bundle.cjs.js', format: 'cjs' },
+          { dest: 'test/_tmp/multiple/bundle.es.js', format: 'es' }
+        ],
+        watch: {
+          inMemory: true,
+          write: false
+        }
+      });
 
+      return sequence(watcher, [
+        'BUILD_START',
+        'BUILD_END',
+        (event) => {
+          assert(event.bundles !== undefined, 'No in-memory support');
+          assert.equal(event.bundles['test/_tmp/multiple/bundle.cjs.js'].code,
+            '\'use strict\';\n\nconsole.log(\'test\');\n');
+          assert.equal(event.bundles['test/_tmp/multiple/bundle.es.js'].code,
+            'console.log(\'test\');\n');
+        }
+      ]);
+    });
+  });
 
 });
