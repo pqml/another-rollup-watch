@@ -1,4 +1,4 @@
-# :mag_right: another-rollup-watch
+# :mag_right: rollup-watch
 This is a fork of [rollup/rollup-watch](http://github.com/rollup/rollup-watch).
 
 * [Features Added](#features-added)
@@ -24,8 +24,10 @@ This is a fork of [rollup/rollup-watch](http://github.com/rollup/rollup-watch).
 
 ## Installation
 ```sh
-npm install -S pqml/another-rollup-watch
+npm install -S pqml/rollup-watch
 ```
+
+To use this fork with the Rollup CLI, see [Usage with the Rollup CLI](#usage-with-the-rollup-cli)
 
 <br>
 
@@ -59,11 +61,16 @@ Contains options passed to the `chokidar` instance. See the [Chokidar API](https
 By default, `usePolling` is set to **false on osx** and to **true on windows and linux**. `ignoreInitial` is set to true.
 
 ### In-memory bundles
-In-memory bundles are passed through the `event.bundles` object, at the `BUILD_END` event.
-Each element in `event.bundles` is an object representing one of the targets / dest passed to rollup.
+In-memory bundles and sourcemaps (if needed) are passed through the `event.files` object, at the `BUILD_END` event.
 
-* `event.bundles[target].code` code of the `target` bundle
-* `event.bundles[target].map` sourcemap of the `target` bundle
+#### `event.files[targetPath]`
+`String` <br>
+Content of the output file wich has `targetPath` as path.
+<br>
+
+#### In-memory sourcemaps
+If `options.sourceMap` is set to true, the sourceMap will be available in `event.files` as well. <br>
+If `options.sourceMap` is set to inline, rollup-watch will automaticly add sourcemap into the bundled files.
 
 <br>
 
@@ -94,7 +101,7 @@ watcher.on('event', (event) => {
 });
 ```
 
-#### Bundle only in memory and console.log bundled code
+#### Bundle only in memory and console.log bundled files
 ```javascript
 const rollupWatch = require('another-rollup-watch');
 
@@ -112,11 +119,10 @@ watcher.on('event', (event) => {
     switch (event.code) {
         case 'BUILD_END':
             console.log('Bundled in ' + event.duration + 'ms');
-            const bundles = event.bundles;
-            for (let dest in bundles) {
-                console.log('Bundle dest path:', dest);
-                console.log('Bundle code:', bundles[dest].code);
-                console.log('Bundle sourcemap:', bundles[dest].map);
+            const files = event.files;
+            for (let dest in files) {
+                console.log('File path:', dest);
+                console.log('File content:', files[dest]);
             }
             break;
     }
