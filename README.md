@@ -1,15 +1,23 @@
 # :mag_right: another-rollup-watch
 This is a fork of [rollup/rollup-watch](http://github.com/rollup/rollup-watch).
 
+* [Features Added](#features-added)
+* [Installation](#installation)
+* [API Usage](#api-usage)
+* [Examples](#examples)
+* [Usage with the Rollup CLI](#usage-with-the-rollup-cli)
+* [License](#license)
+
+
 <br>
 
-## Features added
+## Features Added
 * _Not really a feature_ - chokidar is **not** optional
 * Chokidar opt `usePolling` to `true` by default on Windows and Linux
 * Use one Chokidar instance for all the watched files
 * Stop watching a file if it's not a dependency anymore
 * Remove `require-relative` from the dependencies
-* in-memory builds capability
+* in-memory builds capability (with sourcemap support)
 * Add some tests
 
 <br>
@@ -114,6 +122,26 @@ watcher.on('event', (event) => {
     }
 });
 ```
+
+<br>
+
+## Usage with the Rollup CLI
+
+With npm (and [yarn](https://github.com/yarnpkg) too), you can install a package directly from its github repo. The package will take the name of the repo. You can use that behaviour so Rollup will see this `rollup-watch` as the [original rollup-watch by Rich Harris](https://github.com/rollup/rollup-watch).
+
+#### Installation from the github repo
+
+##### Using SSH (recommanded)
+```sh
+npm install -S pqml/rollup-watch
+```
+
+##### Force the usage of HTTPS
+```sh
+npm install -S git+https://github.com/pqml/rollup-watch.git
+```
+
+This way you can continue to use `rollup -c -w` to enable this fork with the Rollup CLI.
 
 <br>
 

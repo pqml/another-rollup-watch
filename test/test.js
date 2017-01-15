@@ -235,8 +235,8 @@ describe('another-rollup-watch', () => {
         'BUILD_START',
         'BUILD_END',
         event => {
-          assert(event.bundles !== undefined, 'No in-memory support');
-          assert.equal(event.bundles['test/_tmp/basic/bundle.js'].code,
+          assert(event.files !== undefined, 'No in-memory support');
+          assert.equal(event.files['test/_tmp/basic/bundle.js'],
             '\'use strict\';\n\nvar main = 42;\n\nmodule.exports = main;\n');
           watcher.close();
         }
@@ -262,11 +262,65 @@ describe('another-rollup-watch', () => {
         'BUILD_START',
         'BUILD_END',
         (event) => {
-          assert(event.bundles !== undefined, 'No in-memory support');
-          assert.equal(event.bundles['test/_tmp/multiple/bundle.cjs.js'].code,
+          assert(event.files !== undefined, 'No in-memory support');
+          assert.equal(event.files['test/_tmp/multiple/bundle.cjs.js'],
             '\'use strict\';\n\nconsole.log(\'test\');\n');
-          assert.equal(event.bundles['test/_tmp/multiple/bundle.es.js'].code,
+          assert.equal(event.files['test/_tmp/multiple/bundle.es.js'],
             'console.log(\'test\');\n');
+        }
+      ]);
+    });
+  });
+
+
+  it('inlines sourcemap in bundle served in memory', () => {
+    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then(() => {
+
+      const watcher = watch( rollup, {
+        entry: 'test/_tmp/basic/main.js',
+        dest: 'test/_tmp/basic/bundle.js',
+        format: 'cjs',
+        sourceMap: 'inline',
+        watch: {
+          inMemory: true,
+          write: false
+        }
+      });
+
+      return sequence(watcher, [
+        'BUILD_START',
+        'BUILD_END',
+        event => {
+          assert(event.files !== undefined, 'No in-memory support');
+          const frag= '\n//# sourceMappingURL=' +
+            'data:application/json;charset=utf-8;base64,';
+          assert(event.files['test/_tmp/basic/bundle.js']
+            && event.files['test/_tmp/basic/bundle.js'].search(frag) > -1);
+        }
+      ]);
+    });
+  });
+
+  it('outputs sourcemap in memory with bundle served in memory', () => {
+    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then(() => {
+
+      const watcher = watch( rollup, {
+        entry: 'test/_tmp/basic/main.js',
+        dest: 'test/_tmp/basic/bundle.js',
+        format: 'cjs',
+        sourceMap: true,
+        watch: {
+          inMemory: true,
+          write: false
+        }
+      });
+
+      return sequence(watcher, [
+        'BUILD_START',
+        'BUILD_END',
+        event => {
+          assert(event.files !== undefined, 'No in-memory support');
+          assert(event.files['test/_tmp/basic/bundle.js.map']);
         }
       ]);
     });
