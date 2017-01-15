@@ -30,7 +30,7 @@
   "devDependencies": {
     "eslint": "^3.12.2",
     "mocha": "^3.2.0",
-    "rollup": "^0.39.0",
+    "rollup": "^0.41.4",
     "sander": "^0.6.0"
   }
 }
