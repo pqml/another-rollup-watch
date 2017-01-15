@@ -1,5 +1,8 @@
 # :mag_right: rollup-watch
-[![Build Status](https://travis-ci.org/pqml/rollup-watch.svg?branch=master)](https://travis-ci.org/pqml/rollup-watch)
+
+[![Build Status](https://img.shields.io/travis/pqml/rollup-watch/master.svg?style=flat-square)](https://travis-ci.org/pqml/rollup-watch)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com)
+[![license](https://img.shields.io/github/license/pqml/rollup-watch.svg?style=flat-square)](https://raw.githubusercontent.com/pqml/rollup-watch/master/LICENSE)
 
 <br>
 
