@@ -1,6 +1,6 @@
 {
-  "name": "another-rollup-watch",
-  "version": "3.7.0",
+  "name": "rollup-watch",
+  "version": "3.7.1",
   "description": "Watch files for changes and perform incremental rebuilds with Rollup",
   "main": "index.js",
   "files": [
@@ -12,7 +12,7 @@
     "prepublish": "npm run lint && npm test",
     "lint": "eslint src"
   },
-  "repository": "pqml/another-rollup-watch",
+  "repository": "pqml/rollup-watch",
   "keywords": [
     "rollup",
     "modules",
@@ -21,9 +21,9 @@
   "author": "pqml",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pqml/another-rollup-watch/issues"
+    "url": "https://github.com/pqml/rollup-watch/issues"
   },
-  "homepage": "https://github.com/pqml/another-rollup-watch#readme",
+  "homepage": "https://github.com/pqml/rollup-watch#readme",
   "engines": {
     "node": ">=4.2.0"
   },
