@@ -1,3 +1,3 @@
-const rollupWatch = require('./src/rollupWatch.js');
+const rollupWatch = require('./src/rollupWatch.js')
 
-module.exports = rollupWatch;
+module.exports = rollupWatch

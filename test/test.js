@@ -1,48 +1,42 @@
-'use strict';
+'use strict'
 
-const assert = require( 'assert' );
-const sander = require( 'sander' );
-const rollup = require( 'rollup' );
-const watch = require( '..' );
+const assert = require('assert')
+const sander = require('sander')
+const rollup = require('rollup')
+const watch = require('..')
 
-describe('another-rollup-watch', () => {
-  beforeEach(() => sander.rimraf('test/_tmp'));
+describe('rollup-watch', () => {
+  beforeEach(() => sander.rimraf('test/_tmp'))
 
   function run (file) {
-    const resolved = require.resolve(file);
-    delete require.cache[resolved];
-    return require(resolved);
+    const resolved = require.resolve(file)
+    delete require.cache[resolved]
+    return require(resolved)
   }
 
   function sequence (watcher, events) {
-    return new Promise((fulfil, reject) => {
+    return new Promise((resolve, reject) => {
       function go (event) {
-        const next = events.shift();
+        const next = events.shift()
         if (!next) {
-
-          fulfil();
-
+          resolve()
         } else if (typeof next === 'string') {
-
           watcher.once('event', event => {
             if (event.code !== next) {
-              reject(new Error(`Expected ${next} event, got ${event.code}`));
+              reject(new Error(`Expected ${next} event, got ${event.code}`))
             } else {
-              go(event);
+              go(event)
             }
-          });
-
+          })
         } else {
-
           Promise.resolve()
             .then(() => next(event))
             .then(go)
-            .catch(reject);
+            .catch(reject)
         }
       }
-
-      go();
-    });
+      go()
+    })
   }
 
   it('watches a file', () => {
@@ -51,116 +45,113 @@ describe('another-rollup-watch', () => {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs'
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run('./_tmp/basic/bundle.js' ), 42);
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;');
+          assert.equal(run('./_tmp/basic/bundle.js'), 42)
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run('./_tmp/basic/bundle.js'), 43);
-          watcher.close();
+          assert.equal(run('./_tmp/basic/bundle.js'), 43)
+          watcher.close()
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
   it('watches a dependency', () => {
     return sander.copydir('test/fixtures/dep').to('test/_tmp/dep').then(() => {
-
       const watcher = watch(rollup, {
         entry: 'test/_tmp/dep/main.js',
         dest: 'test/_tmp/dep/bundle.js',
         format: 'cjs'
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run('./_tmp/dep/bundle.js' ), 42);
-          sander.writeFileSync('test/_tmp/dep/dep.js', 'export default 43;');
+          assert.equal(run('./_tmp/dep/bundle.js'), 42)
+          sander.writeFileSync('test/_tmp/dep/dep.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run('./_tmp/dep/bundle.js'), 43);
-          watcher.close();
+          assert.equal(run('./_tmp/dep/bundle.js'), 43)
+          watcher.close()
         }
-      ]);
-
-    });
-  });
+      ])
+    })
+  })
 
   it('recovers from an error', () => {
-    return sander.copydir('test/fixtures/basic' ).to('test/_tmp/basic').then(() => {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
       const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs'
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run( './_tmp/basic/bundle.js' ), 42);
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export nope;');
+          assert.equal(run('./_tmp/basic/bundle.js'), 42)
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export nope;')
         },
         'BUILD_START',
         'ERROR',
         () => {
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;');
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run( './_tmp/basic/bundle.js'), 43);
-          watcher.close();
+          assert.equal(run('./_tmp/basic/bundle.js'), 43)
+          watcher.close()
         }
-      ]);
-
-    });
-  });
+      ])
+    })
+  })
 
   it('refuses to watch the output file (#15)', () => {
-    return sander.copydir('test/fixtures/basic').to( 'test/_tmp/basic').then(() => {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
       const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs'
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run('./_tmp/basic/bundle.js' ), 42);
-          sander.writeFileSync('test/_tmp/basic/main.js', `import './bundle.js'`);
+          assert.equal(run('./_tmp/basic/bundle.js'), 42)
+          sander.writeFileSync('test/_tmp/basic/main.js', `import './bundle.js'`)
         },
         'BUILD_START',
         'ERROR',
         event => {
-          assert.equal(event.error.message, 'Cannot import the generated bundle');
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;');
+          assert.equal(event.error.message, 'Cannot import the generated bundle')
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run( './_tmp/basic/bundle.js'), 43);
-          watcher.close();
+          assert.equal(run('./_tmp/basic/bundle.js'), 43)
+          watcher.close()
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
   it('allows to watch the output file when serving only in memory', () => {
-    return sander.copydir('test/fixtures/basic').to( 'test/_tmp/basic').then(() => {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
       const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/main.js',
@@ -169,61 +160,60 @@ describe('another-rollup-watch', () => {
           inMemory: true,
           write: false
         }
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          watcher.close();
+          watcher.close()
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
   it('doesn\'t watches a removed dependency', () => {
     return sander.copydir('test/fixtures/dep').to('test/_tmp/dep').then(() => {
-      const watcher = watch( rollup, {
+      const watcher = watch(rollup, {
         entry: 'test/_tmp/dep/main.js',
         dest: 'test/_tmp/dep/bundle.js',
         format: 'cjs'
-      });
+      })
 
-      return sequence( watcher, [
+      return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run( './_tmp/dep/bundle.js' ), 42);
-          sander.writeFileSync('test/_tmp/dep/main.js', 'export default 43;');
+          assert.equal(run('./_tmp/dep/bundle.js'), 42)
+          sander.writeFileSync('test/_tmp/dep/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
         () => {
-          assert.equal(run('./_tmp/dep/bundle.js'), 43);
-          sander.writeFileSync('test/_tmp/dep/dep.js', 'export default 44;');
+          assert.equal(run('./_tmp/dep/bundle.js'), 43)
+          sander.writeFileSync('test/_tmp/dep/dep.js', 'export default 44;')
         },
         () => {
           return new Promise((resolve, reject) => {
-            let timer = setTimeout(() => resolve(), 250);
+            let timer = setTimeout(() => resolve(), 250)
             watcher.once('event', event => {
               if (event.code === 'BUILD_START') {
-                clearTimeout(timer);
-                reject(new Error('Continue to watch the dependency'));
+                clearTimeout(timer)
+                reject(new Error('Continue to watch the dependency'))
               }
-            });
-          });
+            })
+          })
         },
         () => {
-          watcher.close();
+          watcher.close()
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
   it('builds in memory', () => {
-    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then(() => {
-
-      const watcher = watch( rollup, {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
+      const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs',
@@ -231,20 +221,20 @@ describe('another-rollup-watch', () => {
           inMemory: true,
           write: false
         }
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         event => {
-          assert(event.files !== undefined, 'No in-memory support');
+          assert(event.files !== undefined, 'No in-memory support')
           assert.equal(event.files['test/_tmp/basic/bundle.js'],
-            '\'use strict\';\n\nvar main = 42;\n\nmodule.exports = main;\n');
-          watcher.close();
+            '\'use strict\';\n\nvar main = 42;\n\nmodule.exports = main;\n')
+          watcher.close()
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
   it('builds multiple targets in memory', () => {
     return sander.copydir('test/fixtures/multiple').to('test/_tmp/multiple').then(() => {
@@ -258,27 +248,25 @@ describe('another-rollup-watch', () => {
           inMemory: true,
           write: false
         }
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         (event) => {
-          assert(event.files !== undefined, 'No in-memory support');
+          assert(event.files !== undefined, 'No in-memory support')
           assert.equal(event.files['test/_tmp/multiple/bundle.cjs.js'],
-            '\'use strict\';\n\nconsole.log(\'test\');\n');
+            '\'use strict\';\n\nconsole.log(\'test\');\n')
           assert.equal(event.files['test/_tmp/multiple/bundle.es.js'],
-            'console.log(\'test\');\n');
+            'console.log(\'test\');\n')
         }
-      ]);
-    });
-  });
-
+      ])
+    })
+  })
 
   it('inlines sourcemap in bundle served in memory', () => {
-    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then(() => {
-
-      const watcher = watch( rollup, {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
+      const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs',
@@ -287,26 +275,25 @@ describe('another-rollup-watch', () => {
           inMemory: true,
           write: false
         }
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         event => {
-          assert(event.files !== undefined, 'No in-memory support');
-          const frag= '\n//# sourceMappingURL=' +
-            'data:application/json;charset=utf-8;base64,';
-          assert(event.files['test/_tmp/basic/bundle.js']
-            && event.files['test/_tmp/basic/bundle.js'].search(frag) > -1);
+          assert(event.files !== undefined, 'No in-memory support')
+          const frag = '\n//# sourceMappingURL=' +
+            'data:application/json;charset=utf-8;base64,'
+          assert(event.files['test/_tmp/basic/bundle.js'] &&
+            event.files['test/_tmp/basic/bundle.js'].search(frag) > -1)
         }
-      ]);
-    });
-  });
+      ])
+    })
+  })
 
   it('outputs sourcemap in memory with bundle served in memory', () => {
-    return sander.copydir( 'test/fixtures/basic' ).to( 'test/_tmp/basic' ).then(() => {
-
-      const watcher = watch( rollup, {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
+      const watcher = watch(rollup, {
         entry: 'test/_tmp/basic/main.js',
         dest: 'test/_tmp/basic/bundle.js',
         format: 'cjs',
@@ -315,17 +302,16 @@ describe('another-rollup-watch', () => {
           inMemory: true,
           write: false
         }
-      });
+      })
 
       return sequence(watcher, [
         'BUILD_START',
         'BUILD_END',
         event => {
-          assert(event.files !== undefined, 'No in-memory support');
-          assert(event.files['test/_tmp/basic/bundle.js.map']);
+          assert(event.files !== undefined, 'No in-memory support')
+          assert(event.files['test/_tmp/basic/bundle.js.map'])
         }
-      ]);
-    });
-  });
-
-});
+      ])
+    })
+  })
+})

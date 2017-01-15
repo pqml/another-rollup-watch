@@ -1,6 +1,6 @@
 {
   "name": "rollup-watch",
-  "version": "3.7.1",
+  "version": "3.7.2",
   "description": "Watch files for changes and perform incremental rebuilds with Rollup",
   "main": "index.js",
   "files": [
@@ -9,7 +9,6 @@
   ],
   "scripts": {
     "test": "mocha --slow 200",
-    "prepublish": "npm run lint && npm test",
     "lint": "eslint src"
   },
   "repository": "pqml/rollup-watch",
