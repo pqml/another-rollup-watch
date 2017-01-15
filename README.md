@@ -44,7 +44,7 @@ To use this fork with the Rollup CLI, see [Usage with the Rollup CLI](#usage-wit
 
 ### `const watcher = rollupWatch([opts])`
 
-Sets up a new instance of `another-rollup-watch`. <br>
+Sets up a new instance of `rollup-watch`. <br>
 The return value is an event emitter.
 
 #### Rollup options
@@ -87,7 +87,7 @@ If `options.sourceMap` is set to inline, rollup-watch will automaticly add sourc
 
 #### Watch entry file and console.log each watch event
 ```javascript
-const rollupWatch = require('another-rollup-watch');
+const rollupWatch = require('rollup-watch');
 
 const watcher = rollupWatch({
   entry: 'src/main.js',
@@ -112,7 +112,7 @@ watcher.on('event', (event) => {
 
 #### Bundle only in memory and console.log bundled files
 ```javascript
-const rollupWatch = require('another-rollup-watch');
+const rollupWatch = require('rollup-watch');
 
 const watcher = rollupWatch({
   entry: 'src/main.js',
