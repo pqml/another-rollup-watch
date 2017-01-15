@@ -20,7 +20,7 @@ function watch (rollup, _options) {
     ? [path.resolve(options.dest)]
     : options.targets.map(target => path.resolve(target.dest));
 
-  const moduleWatcher = createModuleWatcher(watchOptions.chokidar || {});
+  const moduleWatcher = createModuleWatcher(watchOptions || {});
   moduleWatcher.setDests(dests);
   moduleWatcher.on('watch', triggerRebuild);
 

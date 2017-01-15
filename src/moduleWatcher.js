@@ -10,14 +10,14 @@ const defaultOpts = {
   //cwd: process.cwd()
 };
 
-function moduleWatcher (userOpts) {
+function moduleWatcher (opts) {
   const api = new Emitter();
   api.isWatching = isWatching;
   api.setDests = setDests;
   api.update = update;
   api.close = close;
 
-  const opts = Object.assign({}, defaultOpts, userOpts || {});
+  const chokidarOpts = Object.assign({}, defaultOpts, opts.chokidar || {});
   let watched = {};
   let cachedCode = {};
   let dests = [];
@@ -51,7 +51,7 @@ function moduleWatcher (userOpts) {
 
   function initWatcher (firstPathToWatch) {
     if (created) return;
-    watcher = chokidar.watch(firstPathToWatch, opts);
+    watcher = chokidar.watch(firstPathToWatch, chokidarOpts);
     watcher.on('all', onWatch);
     created = true;
   }
@@ -66,7 +66,8 @@ function moduleWatcher (userOpts) {
         const id = moduleObj.id;
 
         // throw error if module file is one of the entry file
-        if (dests.indexOf(id) !== -1) {
+        // no need to do this if rollup serve the bundle only in memory
+        if (dests.indexOf(id) !== -1 && opts.write) {
           return reject(new Error('Cannot import the generated bundle'));
         }
 

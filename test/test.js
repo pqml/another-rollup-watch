@@ -157,6 +157,28 @@ describe('another-rollup-watch', () => {
     });
   });
 
+  it('allows to watch the output file when serving only in memory', () => {
+    return sander.copydir('test/fixtures/basic').to( 'test/_tmp/basic').then(() => {
+      const watcher = watch(rollup, {
+        entry: 'test/_tmp/basic/main.js',
+        dest: 'test/_tmp/basic/main.js',
+        format: 'cjs',
+        watch: {
+          inMemory: true,
+          write: false
+        }
+      });
+
+      return sequence(watcher, [
+        'BUILD_START',
+        'BUILD_END',
+        () => {
+          watcher.close();
+        }
+      ]);
+    });
+  });
+
   it('doesn\'t watches a removed dependency', () => {
     return sander.copydir('test/fixtures/dep').to('test/_tmp/dep').then(() => {
       const watcher = watch( rollup, {
