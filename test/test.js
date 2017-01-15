@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require( 'assert' );
 const sander = require( 'sander' );
 const rollup = require( 'rollup' );

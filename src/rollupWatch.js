@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const Emitter = require('events');
 const createModuleWatcher = require('./moduleWatcher');

@@ -1,5 +1,11 @@
 # :mag_right: rollup-watch
+[![Build Status](https://travis-ci.org/pqml/rollup-watch.svg?branch=master)](https://travis-ci.org/pqml/rollup-watch)
+
+<br>
+
 This is a fork of [rollup/rollup-watch](http://github.com/rollup/rollup-watch).
+
+
 
 * [Features Added](#features-added)
 * [Installation](#installation)

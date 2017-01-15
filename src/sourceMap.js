@@ -1,3 +1,5 @@
+'use strict';
+
 function toString (sourcemap) {
   return JSON.stringify(sourcemap);
 }
