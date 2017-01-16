@@ -161,8 +161,8 @@ function watch (rollup, _options) {
               ]
             }
             moduleWatcher.update(fakeBundle)
-              .then(reject(error))
-              .catch(reject(error))
+              .then(() => { reject(error) })
+              .catch(() => { reject(error) })
           } else {
             return reject(error)
           }

@@ -8,6 +8,16 @@ const watch = require('..')
 describe('rollup-watch', () => {
   beforeEach(() => sander.rimraf('test/_tmp'))
 
+  function delayWrite (delay, path, content) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        sander.writeFile(path, content)
+          .then(resolve)
+          .catch(reject)
+      }, delay)
+    })
+  }
+
   function run (file) {
     const resolved = require.resolve(file)
     delete require.cache[resolved]
@@ -52,7 +62,7 @@ describe('rollup-watch', () => {
         'BUILD_END',
         () => {
           assert.equal(run('./_tmp/basic/bundle.js'), 42)
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;')
+          return delayWrite(200, 'test/_tmp/basic/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
@@ -77,7 +87,7 @@ describe('rollup-watch', () => {
         'BUILD_END',
         () => {
           assert.equal(run('./_tmp/dep/bundle.js'), 42)
-          sander.writeFileSync('test/_tmp/dep/dep.js', 'export default 43;')
+          return delayWrite(1000, 'test/_tmp/dep/dep.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
@@ -102,12 +112,12 @@ describe('rollup-watch', () => {
         'BUILD_END',
         () => {
           assert.equal(run('./_tmp/basic/bundle.js'), 42)
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export nope;')
+          return delayWrite(200, 'test/_tmp/basic/main.js', 'export nope;')
         },
         'BUILD_START',
         'ERROR',
         () => {
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;')
+          return delayWrite(200, 'test/_tmp/basic/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
@@ -132,7 +142,7 @@ describe('rollup-watch', () => {
         'BUILD_START',
         'ERROR',
         () => {
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;')
+          return delayWrite(200, 'test/_tmp/basic/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
@@ -157,13 +167,13 @@ describe('rollup-watch', () => {
         'BUILD_END',
         () => {
           assert.equal(run('./_tmp/basic/bundle.js'), 42)
-          sander.writeFileSync('test/_tmp/basic/main.js', `import './bundle.js'`)
+          return delayWrite(200, 'test/_tmp/basic/main.js', `import './bundle.js'`)
         },
         'BUILD_START',
         'ERROR',
         event => {
           assert.equal(event.error.message, 'Cannot import the generated bundle')
-          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;')
+          return delayWrite(200, 'test/_tmp/basic/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
@@ -210,13 +220,13 @@ describe('rollup-watch', () => {
         'BUILD_END',
         () => {
           assert.equal(run('./_tmp/dep/bundle.js'), 42)
-          sander.writeFileSync('test/_tmp/dep/main.js', 'export default 43;')
+          return delayWrite(200, 'test/_tmp/dep/main.js', 'export default 43;')
         },
         'BUILD_START',
         'BUILD_END',
         () => {
           assert.equal(run('./_tmp/dep/bundle.js'), 43)
-          sander.writeFileSync('test/_tmp/dep/dep.js', 'export default 44;')
+          return delayWrite(200, 'test/_tmp/dep/dep.js', 'export default 44;')
         },
         () => {
           return new Promise((resolve, reject) => {
