@@ -41,7 +41,7 @@ function moduleWatcher (opts) {
         if (err) {} // TODO: handle error, maybe via watcher_error event
         let changed = false
         modules.forEach(moduleId => {
-          if (cachedCode[moduleId] && cachedCode[moduleId] !== data) {
+          if (cachedCode[moduleId] !== undefined && cachedCode[moduleId] !== data) {
             changed = true
             cachedCode[moduleId] = data
           }

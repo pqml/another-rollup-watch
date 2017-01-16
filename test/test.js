@@ -119,6 +119,31 @@ describe('rollup-watch', () => {
     })
   })
 
+  it('recovers from an error (starts with the error)', () => {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
+      sander.writeFileSync('test/_tmp/basic/main.js', 'export nope;')
+      const watcher = watch(rollup, {
+        entry: 'test/_tmp/basic/main.js',
+        dest: 'test/_tmp/basic/bundle.js',
+        format: 'cjs'
+      })
+
+      return sequence(watcher, [
+        'BUILD_START',
+        'ERROR',
+        () => {
+          sander.writeFileSync('test/_tmp/basic/main.js', 'export default 43;')
+        },
+        'BUILD_START',
+        'BUILD_END',
+        () => {
+          assert.equal(run('./_tmp/basic/bundle.js'), 43)
+          watcher.close()
+        }
+      ])
+    })
+  })
+
   it('refuses to watch the output file (#15)', () => {
     return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
       const watcher = watch(rollup, {

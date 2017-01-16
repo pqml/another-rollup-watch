@@ -137,7 +137,7 @@ function watch (rollup, _options) {
         })
       }, error => Promise.reject(error))
 
-      // end building - emit BUILD_END or ERROR
+      // end building - emit BUILD_END
       .then(() => {
         building = false
         watcher.emit('event', {
@@ -146,7 +146,31 @@ function watch (rollup, _options) {
           initial: initial,
           files: inMemoryFiles
         })
-      }, error => {
+      })
+
+      // Always watch entry file even if there is an error at the start
+      .catch(error => {
+        return new Promise((resolve, reject) => {
+          if (!moduleWatcher.isWatching()) {
+            let fakeBundle = {
+              modules: [
+                {
+                  id: path.resolve(process.cwd(), buildOpts.entry),
+                  originalCode: ''
+                }
+              ]
+            }
+            moduleWatcher.update(fakeBundle)
+              .then(reject(error))
+              .catch(reject(error))
+          } else {
+            return reject(error)
+          }
+        })
+      })
+
+      // Error during the buid chain - emit ERROR
+      .catch(error => {
         building = false
         watcher.emit('event', {
           code: 'ERROR',
@@ -157,14 +181,6 @@ function watch (rollup, _options) {
       // direct rebuilding if a rebuild is scheduled
       .then(() => {
         if (rebuildScheduled && !closed) build()
-      })
-
-      // WIP - special event for handle internal rollup-watch errors
-      .catch(error => {
-        watcher.emit('event', {
-          code: 'WATCHER_ERROR',
-          error
-        })
       })
   }
 
