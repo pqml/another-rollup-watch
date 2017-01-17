@@ -1,9 +1,9 @@
 # :mag_right: another-rollup-watch
 
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/pqml/another-rollup-watch?svg=true)](https://ci.appveyor.com/project/pqml/another-rollup-watch)
-[![Build Status](https://img.shields.io/travis/pqml/another-rollup-watch/master.svg)](https://travis-ci.org/pqml/another-rollup-watch)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
-[![license](https://img.shields.io/github/license/pqml/another-rollup-watch.svg)](https://raw.githubusercontent.com/pqml/another-rollup-watch/master/LICENSE)
+[![Build Status](https://travis-ci.org/pqml/another-rollup-watch.svg?branch=master)](https://travis-ci.org/pqml/another-rollup-watch)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.png)](http://standardjs.com)
+[![license](https://img.shields.io/github/license/pqml/another-rollup-watch.png)](https://raw.githubusercontent.com/pqml/another-rollup-watch/master/LICENSE)
 
 <br>
 
