@@ -1,8 +1,9 @@
 # :mag_right: another-rollup-watch
 
-[![Build Status](https://img.shields.io/travis/pqml/another-rollup-watch/master.svg?style=flat-square)](https://travis-ci.org/pqml/another-rollup-watch)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com)
-[![license](https://img.shields.io/github/license/pqml/another-rollup-watch.svg?style=flat-square)](https://raw.githubusercontent.com/pqml/another-rollup-watch/master/LICENSE)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/pqml/another-rollup-watch?svg=true)](https://ci.appveyor.com/project/pqml/another-rollup-watch)
+[![Build Status](https://img.shields.io/travis/pqml/another-rollup-watch/master.svg)](https://travis-ci.org/pqml/another-rollup-watch)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
+[![license](https://img.shields.io/github/license/pqml/another-rollup-watch.svg)](https://raw.githubusercontent.com/pqml/another-rollup-watch/master/LICENSE)
 
 <br>
 
@@ -142,18 +143,18 @@ watcher.on('event', (event) => {
 
 ## Usage with the Rollup CLI
 
-With npm (and [yarn](https://github.com/yarnpkg) too), you can install a package directly from its github repo. The package will take the name of the repo. I made a "proxy" of `another-rollup-watch` called `rollup-watch` (link) so you can use that behaviour.
+With npm (and [yarn](https://github.com/yarnpkg) too), you can install a package directly from its github repo. The package will take the name of the repo. I made a "alias" of `another-rollup-watch` called `rollup-watch` so you can use that behaviour. ([→ see the rollup-watch gist](https://gist.github.com/pqml/5a8d9d6acc1d18e04b8fd9d22f3ca046))
 
 #### Installation from the github repo
 
 ##### Using SSH (recommanded)
 ```sh
-TODO
+npm i -S gist:5a8d9d6acc1d18e04b8fd9d22f3ca046
 ```
 
 ##### Force the usage of HTTPS
 ```sh
-TODO
+npm i -S git+https://gist.github.com/pqml/5a8d9d6acc1d18e04b8fd9d22f3ca046
 ```
 
 This way you can continue to use `rollup -c -w`. Rollup will use the "fake" `rollup-watch` insteand of the original one.

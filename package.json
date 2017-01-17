@@ -1,6 +1,6 @@
 {
   "name": "another-rollup-watch",
-  "version": "3.7.5",
+  "version": "3.7.6",
   "description": "An alternative to the original another-rollup-watch",
   "main": "index.js",
   "files": [
@@ -28,7 +28,8 @@
     "node": ">=4.2.0"
   },
   "dependencies": {
-    "chokidar": "^1.6.1"
+    "chokidar": "^1.6.1",
+    "rollup-watch": "gist:5a8d9d6acc1d18e04b8fd9d22f3ca046"
   },
   "devDependencies": {
     "eslint": "^3.12.2",
