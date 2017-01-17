@@ -5,7 +5,7 @@ const sander = require('sander')
 const rollup = require('rollup')
 const watch = require('..')
 
-describe('rollup-watch', () => {
+describe('another-rollup-watch', () => {
   beforeEach(() => sander.rimraf('test/_tmp'))
 
   function delayWrite (delay, path, content) {

@@ -1,8 +1,8 @@
-# :mag_right: rollup-watch
+# :mag_right: another-rollup-watch
 
-[![Build Status](https://img.shields.io/travis/pqml/rollup-watch/master.svg?style=flat-square)](https://travis-ci.org/pqml/rollup-watch)
+[![Build Status](https://img.shields.io/travis/pqml/another-rollup-watch/master.svg?style=flat-square)](https://travis-ci.org/pqml/another-rollup-watch)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com)
-[![license](https://img.shields.io/github/license/pqml/rollup-watch.svg?style=flat-square)](https://raw.githubusercontent.com/pqml/rollup-watch/master/LICENSE)
+[![license](https://img.shields.io/github/license/pqml/another-rollup-watch.svg?style=flat-square)](https://raw.githubusercontent.com/pqml/another-rollup-watch/master/LICENSE)
 
 <br>
 
@@ -33,7 +33,7 @@ This is a fork of [rollup/rollup-watch](http://github.com/rollup/rollup-watch).
 
 ## Installation
 ```sh
-npm install -S pqml/rollup-watch
+npm install -S another-rollup-watch
 ```
 
 To use this fork with the Rollup CLI, see [Usage with the Rollup CLI](#usage-with-the-rollup-cli)
@@ -44,7 +44,7 @@ To use this fork with the Rollup CLI, see [Usage with the Rollup CLI](#usage-wit
 
 ### `const watcher = rollupWatch([opts])`
 
-Sets up a new instance of `rollup-watch`. <br>
+Sets up a new instance of `another-rollup-watch`. <br>
 The return value is an event emitter.
 
 #### Rollup options
@@ -52,16 +52,16 @@ The return value is an event emitter.
 rollupWatch use the same base options as the `rollup.rollup` function. <br>
 See the [Javascript API of Rollup](https://github.com/rollup/rollup/wiki/JavaScript-API#rolluprollup-options-) to learn more about the options you can pass to Rollup.
 
-#### watch 
+#### watch
 `Object` <br>
-Contains options for the watcher. See its options below. 
+Contains options for the watcher. See its options below.
 
 #### watch.inMemory
-`Boolean` (_Default: `false`_) <br> 
+`Boolean` (_Default: `false`_) <br>
 If true, all target bundles will be serve in memory through the `BUILD_END` event response
 
 #### watch.write
-`Boolean` (_Default: `true`_) <br> 
+`Boolean` (_Default: `true`_) <br>
 If true, all target bundles will be writed on disk. Set this to `false` with `watch.inMemory` set to `true` to serve bundles in memory only.
 
 #### watch.chokidar (_Default: see below_)
@@ -79,7 +79,7 @@ Content of the output file wich has `targetPath` as path.
 
 #### In-memory sourcemaps
 If `options.sourceMap` is set to true, the sourceMap will be available in `event.files` as well. <br>
-If `options.sourceMap` is set to inline, rollup-watch will automaticly add sourcemap into the bundled files.
+If `options.sourceMap` is set to inline, another-rollup-watch will automaticly add sourcemap into the bundled files.
 
 <br>
 
@@ -87,7 +87,7 @@ If `options.sourceMap` is set to inline, rollup-watch will automaticly add sourc
 
 #### Watch entry file and console.log each watch event
 ```javascript
-const rollupWatch = require('rollup-watch');
+const rollupWatch = require('another-rollup-watch');
 
 const watcher = rollupWatch({
   entry: 'src/main.js',
@@ -112,7 +112,7 @@ watcher.on('event', (event) => {
 
 #### Bundle only in memory and console.log bundled files
 ```javascript
-const rollupWatch = require('rollup-watch');
+const rollupWatch = require('another-rollup-watch');
 
 const watcher = rollupWatch({
   entry: 'src/main.js',
@@ -142,21 +142,21 @@ watcher.on('event', (event) => {
 
 ## Usage with the Rollup CLI
 
-With npm (and [yarn](https://github.com/yarnpkg) too), you can install a package directly from its github repo. The package will take the name of the repo. You can use that behaviour so Rollup will see this `rollup-watch` as the [original rollup-watch by Rich Harris](https://github.com/rollup/rollup-watch).
+With npm (and [yarn](https://github.com/yarnpkg) too), you can install a package directly from its github repo. The package will take the name of the repo. I made a "proxy" of `another-rollup-watch` called `rollup-watch` (link) so you can use that behaviour.
 
 #### Installation from the github repo
 
 ##### Using SSH (recommanded)
 ```sh
-npm install -S pqml/rollup-watch
+TODO
 ```
 
 ##### Force the usage of HTTPS
 ```sh
-npm install -S git+https://github.com/pqml/rollup-watch.git
+TODO
 ```
 
-This way you can continue to use `rollup -c -w` to enable this fork with the Rollup CLI.
+This way you can continue to use `rollup -c -w`. Rollup will use the "fake" `rollup-watch` insteand of the original one.
 
 <br>
 
