@@ -1,6 +1,6 @@
 {
   "name": "another-rollup-watch",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "description": "An alternative to the original rollup-watch",
   "main": "index.js",
   "files": [
