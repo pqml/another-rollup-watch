@@ -1,4 +1,4 @@
-# :mag_right: another-rollup-watch
+# :mag_right::cyclone: another-rollup-watch
 
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/pqml/another-rollup-watch?svg=true)](https://ci.appveyor.com/project/pqml/another-rollup-watch)
 [![Build Status](https://secure.travis-ci.org/pqml/another-rollup-watch.svg)](https://travis-ci.org/pqml/another-rollup-watch)
