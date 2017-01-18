@@ -149,7 +149,7 @@ function watch (rollup, _options) {
         })
       })
 
-      // Force watch file which trigerred the error
+      // Force to watch file which trigerred the error
       // This way we can watch if the user fixes the error in this file
       .catch(error => {
         return new Promise((resolve, reject) => {
