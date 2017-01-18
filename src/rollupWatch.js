@@ -4,6 +4,7 @@ const path = require('path')
 const Emitter = require('events')
 const createModuleWatcher = require('./moduleWatcher')
 const sourceMap = require('./sourceMap')
+const getTriggerrer = require('./getTriggerrer')
 
 const defaultOpts = {
   chokidar: {},
@@ -70,7 +71,7 @@ function watch (rollup, _options) {
     rebuildScheduled = false
 
     const start = Date.now()
-    const initial = !moduleWatcher.isWatching()
+    const initial = !moduleWatcher.isCreated()
     const inMemoryFiles = {}
     const buildOpts = Object.assign({}, options)
 
@@ -148,24 +149,13 @@ function watch (rollup, _options) {
         })
       })
 
-      // Always watch entry file even if there is an error at the start
+      // Force watch file which trigerred the error
+      // This way we can watch if the user fixes the error in this file
       .catch(error => {
         return new Promise((resolve, reject) => {
-          if (!moduleWatcher.isWatching()) {
-            let fakeBundle = {
-              modules: [
-                {
-                  id: path.resolve(process.cwd(), buildOpts.entry),
-                  originalCode: ''
-                }
-              ]
-            }
-            moduleWatcher.update(fakeBundle)
-              .then(() => { reject(error) })
-              .catch(() => { reject(error) })
-          } else {
-            return reject(error)
-          }
+          const file = getTriggerrer(error)
+          if (!file) reject(error)
+          moduleWatcher.forceWatch(file, () => { reject(error) })
         })
       })
 

@@ -14,7 +14,8 @@ const defaultOpts = {
 
 function moduleWatcher (opts) {
   const api = new Emitter()
-  api.isWatching = isWatching
+  api.isCreated = isCreated
+  api.forceWatch = forceWatch
   api.setDests = setDests
   api.update = update
   api.close = close
@@ -150,7 +151,18 @@ function moduleWatcher (opts) {
     dests = _dests || []
   }
 
-  function isWatching () {
+  function forceWatch (moduleId, cb) {
+    fs.realpath(moduleId, (err, modulePath) => {
+      if (err) return cb(err)
+      if (watched[modulePath]) return cb(null)
+      add(modulePath)
+      watched[modulePath].push(moduleId)
+      cachedCode[moduleId] = null
+      return cb(null)
+    })
+  }
+
+  function isCreated () {
     return created
   }
 
