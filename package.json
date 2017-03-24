@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "mocha --slow 200",
-    "lint": "eslint src"
+    "lint": "snazzy src"
   },
   "repository": "pqml/another-rollup-watch",
   "keywords": [
@@ -31,12 +31,9 @@
     "chokidar": "^1.6.1"
   },
   "devDependencies": {
-    "eslint": "^3.14.0",
-    "eslint-config-standard": "^8.0.0-beta.0",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^2.0.1",
     "mocha": "^3.2.0",
     "rollup": "^0.41.4",
-    "sander": "^0.6.0"
+    "sander": "^0.6.0",
+    "snazzy": "^6.0.0"
   }
 }
