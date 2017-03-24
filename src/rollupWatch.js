@@ -57,7 +57,7 @@ function watch (rollup, _options) {
     if (opts.sourceMap === true) {
       const mapPath = opts.sourceMapFile || opts.dest + '.map'
       code += '\n//# sourceMappingURL=' +
-        opts.sourceMapFile ? mapPath : path.basename(mapPath)
+        (opts.sourceMapFile ? mapPath : path.basename(mapPath))
       inMemoryNewFiles[mapPath] = sourceMap.toString(res.map)
     } else if (opts.sourceMap === 'inline') {
       code += '\n//# sourceMappingURL=' + sourceMap.toUrl(res.map)
