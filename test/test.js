@@ -1,3 +1,4 @@
+/* global describe, it, beforeEach */
 'use strict'
 
 const assert = require('assert')
@@ -48,6 +49,22 @@ describe('another-rollup-watch', () => {
       go()
     })
   }
+
+  it('don\'t watch if entry doesn\'t exist', () => {
+    return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {
+      const watcher = watch(rollup, {
+        entry: 'test/_tmp/basic/mfain.js',
+        dest: 'test/_tmp/basic/bundle.js',
+        format: 'cjs'
+      })
+
+      return sequence(watcher, [
+        'BUILD_START',
+        'ERROR',
+        (e) => assert.equal(e.error.code, 'UNRESOLVED_ENTRY')
+      ])
+    })
+  })
 
   it('watches a file', () => {
     return sander.copydir('test/fixtures/basic').to('test/_tmp/basic').then(() => {

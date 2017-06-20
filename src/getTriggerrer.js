@@ -3,6 +3,8 @@
 const path = require('path')
 const cwd = process.cwd()
 
+// Some errors don't send the loc property (filepath who trigerred the error)
+// We try to get one directly from the error message
 const patterns = [
   /Could not resolve .* from (.*)/i
 ]

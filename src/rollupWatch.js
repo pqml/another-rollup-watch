@@ -150,8 +150,9 @@ function watch (rollup, _options) {
         })
       })
 
-      // Force to watch file which trigerred the error
-      // This way we can watch if the user fixes the error in this file
+      // Try to get the file who trigger the error
+      // watch it so we can emit a build_end when the error is fixed
+      // this is useful when using another-rollup-watch from a devServer.
       .catch(error => {
         return new Promise((resolve, reject) => {
           const file = getTriggerrer(error)
