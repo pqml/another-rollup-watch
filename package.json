@@ -1,6 +1,6 @@
 {
   "name": "another-rollup-watch",
-  "version": "3.9.2",
+  "version": "3.10.0",
   "description": "An alternative to the original rollup-watch",
   "main": "index.js",
   "files": [
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "mocha": "^3.4.2",
-    "rollup": "^0.43.0",
+    "rollup": "^0.45.2",
     "sander": "^0.6.0",
     "snazzy": "^6.0.0"
   }

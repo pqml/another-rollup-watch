@@ -50,21 +50,24 @@ function watch (rollup, _options) {
   }
 
   function createInMemory (bundle, opts) {
-    const res = bundle.generate(opts)
-    let inMemoryNewFiles = {}
-    let code = res.code
+    return new Promise((resolve) => {
+      bundle.generate(opts).then(res => {
+        let inMemoryNewFiles = {}
+        let code = res.code
 
-    if (opts.sourceMap === true) {
-      const mapPath = opts.sourceMapFile || opts.dest + '.map'
-      code += '\n//# sourceMappingURL=' +
-        (opts.sourceMapFile ? mapPath : path.basename(mapPath))
-      inMemoryNewFiles[mapPath] = sourceMap.toString(res.map)
-    } else if (opts.sourceMap === 'inline') {
-      code += '\n//# sourceMappingURL=' + sourceMap.toUrl(res.map)
-    }
+        if (opts.sourceMap === true) {
+          const mapPath = opts.sourceMapFile || opts.dest + '.map'
+          code += '\n//# sourceMappingURL=' +
+            (opts.sourceMapFile ? mapPath : path.basename(mapPath))
+          inMemoryNewFiles[mapPath] = sourceMap.toString(res.map)
+        } else if (opts.sourceMap === 'inline') {
+          code += '\n//# sourceMappingURL=' + sourceMap.toUrl(res.map)
+        }
 
-    inMemoryNewFiles[opts.dest] = code
-    return inMemoryNewFiles
+        inMemoryNewFiles[opts.dest] = code
+        resolve(inMemoryNewFiles)
+      })
+    })
   }
 
   function build () {
@@ -99,43 +102,48 @@ function watch (rollup, _options) {
       // write target files
       .then(bundle => {
         return new Promise((resolve, reject) => {
+          let p = []
           // multiple output destinations
           if (buildOpts.targets) {
-            let p = []
             for (let i = 0; i < buildOpts.targets.length; i++) {
               const targetOpts = buildOpts.targets[i]
               const mergedOpts = Object.assign({}, buildOpts, targetOpts)
               if (watchOptions.inMemory) {
-                const newInMemoryFiles = createInMemory(bundle, mergedOpts)
-                Object.assign(inMemoryFiles, newInMemoryFiles)
+                p.push(new Promise(resolve => {
+                  createInMemory(bundle, mergedOpts)
+                    .then(newInMemoryFiles => {
+                      Object.assign(inMemoryFiles, newInMemoryFiles)
+                      return resolve()
+                    })
+                }))
               }
               if (watchOptions.write) {
                 p.push(bundle.write(mergedOpts))
               }
             }
-            Promise.all(p)
-              .then(() => resolve(bundle))
-              .catch(reject)
-
           // single output destination
           } else if (buildOpts.dest) {
             if (watchOptions.inMemory) {
-              const newInMemoryFiles = createInMemory(bundle, buildOpts)
-              Object.assign(inMemoryFiles, newInMemoryFiles)
+              p.push(new Promise(resolve => {
+                createInMemory(bundle, buildOpts)
+                  .then(newInMemoryFiles => {
+                    Object.assign(inMemoryFiles, newInMemoryFiles)
+                    return resolve()
+                  })
+              }))
             }
             if (watchOptions.write) {
-              bundle.write(buildOpts)
-                .then(() => resolve(bundle))
-                .catch(reject)
-            } else {
-              return resolve(bundle)
+              p.push(bundle.write(buildOpts))
             }
-
           // if no destination, we don't bundle anything
           // maybe it's better to reject with an error ?
           } else {
-            resolve(bundle)
+            return resolve(bundle)
           }
+
+          Promise.all(p)
+            .then(() => resolve(bundle))
+            .catch(reject)
         })
       }, error => Promise.reject(error))
 
