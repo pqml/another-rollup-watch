@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "mocha": "^3.4.2",
-    "rollup": "^0.46.0",
+    "rollup": "^0.47.5",
     "sander": "^0.6.0",
     "snazzy": "^6.0.0"
   }
